@@ -1,16 +1,17 @@
-import PropTypes from 'prop-types';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { object, string, number } from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
 
-import css from './ContactForm.module.css';
 import ValidateWarning from 'components/ValidateWarning';
 import { getContacts } from 'redux/contacts/contactsSlice';
 import { addContact } from 'redux/contacts/contactsSlice';
 
+import css from './ContactForm.module.css';
+
 export default function ContactForm() {
   const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
 
   const initialValue = {
     name: '',
@@ -25,26 +26,22 @@ export default function ContactForm() {
 
   const handleSubmit = (data, { resetForm }) => {
     data.id = nanoid();
-    console.log(data);
-    console.log(addContact(data));
+
+    for (let i = 0; i < contacts.length; i++) {
+      if (contacts[i].number === data.number) {
+        alert(
+          `${data.number} is already in your contacts with name:  ${contacts[i].name}`
+        );
+        return;
+      }
+      if (contacts[i].name === data.name) {
+        alert(
+          `${data.name} is already in your contacts with number:  ${contacts[i].number}`
+        );
+        return;
+      }
+    }
     dispatch(addContact(data));
-
-    // for (let i = 0; i < contacts.length; i++) {
-    //   if (contacts[i].number === data.number) {
-    //     alert(
-    //       `${data.number} is already in your contacts with name:  ${contacts[i].name}`
-    //     );
-    //     return;
-    //   }
-    //   if (contacts[i].name === data.name) {
-    //     alert(
-    //       `${data.name} is already in your contacts with number:  ${contacts[i].number}`
-    //     );
-    //     return;
-    //   }
-    // }
-
-    // setContacts(prevState => [...prevState, data]);
 
     resetForm();
   };
@@ -91,7 +88,3 @@ export default function ContactForm() {
     </Formik>
   );
 }
-
-ContactForm.propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
-};

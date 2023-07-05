@@ -1,7 +1,16 @@
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { getFilter, filterContacts } from 'redux/filter/filterSlice';
+
 import css from './SearchBox.module.css';
 
-export default function SearchBox({ value, onChange }) {
+export default function SearchBox() {
+  const value = useSelector(getFilter);
+  const dispatch = useDispatch();
+  const onChange = e => {
+    dispatch(filterContacts(e.currentTarget.value));
+  };
+
   return (
     <label className={css.filter}>
       Find contacts by name
@@ -9,8 +18,3 @@ export default function SearchBox({ value, onChange }) {
     </label>
   );
 }
-
-SearchBox.propTypes = {
-  value: PropTypes.string,
-  onChange: PropTypes.func,
-};
