@@ -1,11 +1,10 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { object, string, number } from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import { nanoid } from 'nanoid';
 
 import ValidateWarning from 'components/ValidateWarning';
 import { getContacts } from 'redux/contacts/contactsSlice';
-import { addContact } from 'redux/contacts/contactsSlice';
+import { addContact } from 'redux/operations';
 
 import css from './ContactForm.module.css';
 
@@ -25,8 +24,6 @@ export default function ContactForm() {
   });
 
   const handleSubmit = (data, { resetForm }) => {
-    data.id = nanoid();
-
     for (let i = 0; i < contacts.length; i++) {
       if (contacts[i].number === data.number) {
         alert(
