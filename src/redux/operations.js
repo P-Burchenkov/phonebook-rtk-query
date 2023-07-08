@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 axios.defaults.baseURL = 'https://64a6b3dc096b3f0fcc805e3f.mockapi.io';
 
@@ -36,7 +37,9 @@ export const deleteContact = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const responce = await axios.delete(`/contacts/${id}`, id);
-      console.log(responce);
+      toast.success(
+        `Number with name "${responce.data.name}" was successfully deleted from your phonebook!`
+      );
       return responce.data.id;
     } catch (error) {
       rejectWithValue(error.message);

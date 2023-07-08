@@ -1,16 +1,17 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { object, string, number } from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 import ValidateWarning from 'components/ValidateWarning';
-import { getContacts } from 'redux/contacts/contactsSlice';
+import { selectContacts } from 'redux/selectors';
 import { addContact } from 'redux/operations';
 
 import css from './ContactForm.module.css';
 
 export default function ContactForm() {
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(selectContacts);
 
   const initialValue = {
     name: '',
@@ -26,18 +27,23 @@ export default function ContactForm() {
   const handleSubmit = (data, { resetForm }) => {
     for (let i = 0; i < contacts.length; i++) {
       if (contacts[i].number === data.number) {
-        alert(
-          `${data.number} is already in your contacts with name:  ${contacts[i].name}`
+        toast.error(
+          `Number: ${data.number} is already in your contacts with name:  "${contacts[i].name}"!`
         );
+
         return;
       }
       if (contacts[i].name === data.name) {
-        alert(
-          `${data.name} is already in your contacts with number:  ${contacts[i].number}`
+        toast.error(
+          `"${data.name}" is already in your contacts with number:  ${contacts[i].number}!`
         );
+
         return;
       }
     }
+    toast.success(
+      `Number ${data.number} was successfully added to you phonebook with name: "${data.name}"!`
+    );
     dispatch(addContact(data));
 
     resetForm();
