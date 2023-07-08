@@ -1,55 +1,45 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import {
-  fetchContactsRequest,
-  fetchContactsSuccess,
-  fetchContactsError,
-  addConntactRequest,
-  addContactError,
-  addConntactSuccess,
-  delContactRequest,
-  delContactError,
-  delContactSuccess,
-} from './contacts/contactsSlice';
 
 axios.defaults.baseURL = 'https://64a6b3dc096b3f0fcc805e3f.mockapi.io';
 
-export const fetchContacts = () => {
-  return async dispatch => {
-    dispatch(fetchContactsRequest());
+export const fetchContacts = createAsyncThunk(
+  'fetchContactsStatus',
+  async (_, { rejectWithValue }) => {
     try {
       const responce = await axios.get('/contacts');
 
       if (!responce.data.length) {
         throw new Error('There is no contacts in your phonebook');
       }
-      dispatch(fetchContactsSuccess(responce.data));
+      return responce.data;
     } catch (error) {
-      dispatch(fetchContactsError(error.message));
+      rejectWithValue(error.message);
     }
-  };
-};
+  }
+);
 
-export const addContact = contact => {
-  return async dispatch => {
-    dispatch(addConntactRequest);
+export const addContact = createAsyncThunk(
+  'addContactStatus',
+  async (contact, { rejectWithValue }) => {
     try {
-      axios.post('/contacts', contact);
-      dispatch(addConntactSuccess(contact));
+      const responce = await axios.post('/contacts', contact);
+      return responce.data;
     } catch (error) {
-      dispatch(addContactError(error.message));
+      rejectWithValue(error.message);
     }
-  };
-};
+  }
+);
 
-export const deleteContact = id => {
-  return async dispatch => {
-    dispatch(delContactRequest);
+export const deleteContact = createAsyncThunk(
+  'delContactStatus',
+  async (id, { rejectWithValue }) => {
     try {
-      axios.delete(`/contacts/${id}`, id);
-      dispatch(delContactSuccess(id));
+      const responce = await axios.delete(`/contacts/${id}`, id);
+      console.log(responce);
+      return responce.data.id;
     } catch (error) {
-      dispatch(delContactError(error.message));
+      rejectWithValue(error.message);
     }
-  };
-};
+  }
+);
