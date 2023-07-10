@@ -28,7 +28,7 @@ export default function Contacts() {
               <li className={css.contact} key={id}>
                 <span className={css.name}>{name}</span>
                 <span>{number}</span>
-                <DeleteButton id={id} number={number} name={name} />
+                <DeleteButton id={id} />
               </li>
             );
           })}

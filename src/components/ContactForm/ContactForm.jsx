@@ -1,6 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { object, string, number } from 'yup';
 import { toast } from 'react-toastify';
+import { RotatingLines } from 'react-loader-spinner';
 
 import ValidateWarning from 'components/ValidateWarning';
 import {
@@ -11,7 +12,7 @@ import {
 import css from './ContactForm.module.css';
 
 export default function ContactForm() {
-  const [addContact] = useAddContactMutation();
+  const [addContact, { isLoading }] = useAddContactMutation();
   const { data: contacts = [] } = useGetContactsQuery();
 
   const initialValue = {
@@ -91,6 +92,7 @@ export default function ContactForm() {
         </label>
         <button type="submit" className={css.button}>
           Add contact
+          {isLoading && <RotatingLines strokeColor="grey" width="16" />}
         </button>
       </Form>
     </Formik>

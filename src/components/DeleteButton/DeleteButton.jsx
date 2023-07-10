@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import { useDeleteContactMutation } from 'redux/contacts/contactsRTK';
+import { RotatingLines } from 'react-loader-spinner';
 
 import css from './DeleteButton.module.css';
 import { toast } from 'react-toastify';
 
-export default function DeleteButton({ id, number, name }) {
+export default function DeleteButton({ id }) {
   const [deleteContact, { isLoading }] = useDeleteContactMutation();
 
   const handleDelete = () => {
@@ -27,7 +28,8 @@ export default function DeleteButton({ id, number, name }) {
       id={id}
       onClick={handleDelete}
     >
-      Delete
+      delete
+      {isLoading && <RotatingLines strokeColor="grey" width="16" />}
     </button>
   );
 }
