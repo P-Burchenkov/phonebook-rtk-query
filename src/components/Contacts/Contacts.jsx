@@ -1,35 +1,48 @@
 import { useSelector } from 'react-redux/es/hooks/useSelector';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { LineWave } from 'react-loader-spinner';
+import { toast } from 'react-toastify';
 
-import { selectFilteredContacts } from 'redux/selectors';
+import { selectFilter } from 'redux/filter/filterSlice';
 import DeleteButton from 'components/DeleteButton';
-import { fetchContacts } from 'redux/operations';
+import { useGetContactsQuery } from 'redux/contacts/contactsRTK';
+
+import { filterContacts } from 'redux/operations';
 
 import css from './Contacts.module.css';
 
 export default function Contacts() {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch]);
+  const { data: contacts = [], error, isFetching } = useGetContactsQuery();
 
-  const filteredContactsList = useSelector(selectFilteredContacts);
+  const filter = useSelector(selectFilter);
 
-  if (!filteredContactsList.length) {
-    return;
-  }
+  const filteredContacts = filterContacts(filter, contacts);
+
   return (
-    <ul className={css.list}>
-      {filteredContactsList.map(({ number, name, id }) => {
-        return (
-          <li className={css.contact} key={id}>
-            <span className={css.name}>{name}</span>
-            <span>{number}</span>
-            <DeleteButton id={id} />
-          </li>
-        );
-      })}
-    </ul>
+    <>
+      {error ? (
+        toast.error(error.error)
+      ) : (
+        <ul className={css.list}>
+          {filteredContacts.map(({ number, name, id }) => {
+            return (
+              <li className={css.contact} key={id}>
+                <span className={css.name}>{name}</span>
+                <span>{number}</span>
+                <DeleteButton id={id} number={number} name={name} />
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {isFetching && (
+        <LineWave
+          color="red"
+          firstLineColor="blue"
+          middleLineColor="green"
+          lastLineColor="grey"
+        />
+      )}
+    </>
   );
 }

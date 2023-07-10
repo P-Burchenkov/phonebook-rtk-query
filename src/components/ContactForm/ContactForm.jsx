@@ -1,17 +1,18 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { object, string, number } from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import ValidateWarning from 'components/ValidateWarning';
-import { selectContacts } from 'redux/selectors';
-import { addContact } from 'redux/operations';
+import {
+  useAddContactMutation,
+  useGetContactsQuery,
+} from 'redux/contacts/contactsRTK';
 
 import css from './ContactForm.module.css';
 
 export default function ContactForm() {
-  const dispatch = useDispatch();
-  const contacts = useSelector(selectContacts);
+  const [addContact] = useAddContactMutation();
+  const { data: contacts = [] } = useGetContactsQuery();
 
   const initialValue = {
     name: '',
@@ -41,10 +42,14 @@ export default function ContactForm() {
         return;
       }
     }
-    toast.success(
-      `Number ${data.number} was successfully added to you phonebook with name: "${data.name}"!`
-    );
-    dispatch(addContact(data));
+    try {
+      const response = addContact(data);
+      response.then(({ data }) => {
+        toast.success(
+          `Number ${data.number} was successfully added to you phonebook with name: "${data.name}"!`
+        );
+      });
+    } catch (error) {}
 
     resetForm();
   };
